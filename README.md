@@ -2,9 +2,13 @@
 
 Modern, yüksek hacimli veri işleme kapasitesine sahip, gerçek SQL verileri ile çalışan kapsamlı bir veteriner klinik yönetim sistemi.
 
-VetAnalytics; veteriner klinik operasyonlarını yönetmek, analiz etmek ve raporlamak amacıyla geliştirilmiş full-stack bir ASP.NET Core MVC projesidir. Projede büyük ölçekli veri setleri üzerinde filtreleme, sayfalama, dashboard analitiği ve Excel export işlemleri optimize edilmiş şekilde uygulanmıştır.
+VetAnalytics;
+veteriner klinik operasyonlarını yönetmek,analiz etmek ve raporlamak amacıyla geliştirilmiş full-stack bir ASP.NET Core MVC projesidir. 
+
+Projede büyük ölçekli veri setleri üzerinde filtreleme, sayfalama, dashboard analitiği ve Excel export işlemleri optimize edilmiş şekilde uygulanmıştır.
 
 🚀 Kullanılan Teknolojiler
+
 ASP.NET Core (.NET 6)
 Dapper
 Microsoft SQL Server
@@ -55,9 +59,13 @@ Dashboard ekranı tamamen gerçek SQL verileri ile çalışmaktadır.
 📌 Projenin Amaçları
 
 Büyük veri üzerinde performanslı sorgular yazmak
+
 Dapper ORM kullanımını ileri seviyede uygulamak
+
 SQL optimizasyonu yapmak
+
 Dashboard analitiği geliştirmek
+
 
 Projeye ait görseller : 
 
