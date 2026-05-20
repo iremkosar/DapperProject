@@ -28,9 +28,11 @@ DTO Layer
 Projedeki tüm veriler özel olarak üretilmiştir.
 
 Veri Üretim Süreci
+
 C# Console Application ile rastgele veri üretildi
 
 Toplam Veri
+
 1.637.875+ satır
 
 📈 Dashboard
@@ -39,10 +41,15 @@ Dashboard ekranı tamamen gerçek SQL verileri ile çalışmaktadır.
 
 
 📅 Randevu Yönetimi
+
 🐶 Hayvan Yönetimi
+
 👤 Sahip Yönetimi
+
 👨‍⚕️ Veteriner Yönetimi
+
 💉 Aşı Takibi
+
 🩺 Tedavi Yönetimi
 
 📌 Projenin Amaçları
