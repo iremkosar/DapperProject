@@ -95,7 +95,9 @@ Projeye ait görseller :
 
 ![](https://github.com/iremkosar/DapperProject/blob/a3570666d592a4bfbc7c0ecf5caf0be988484a4c/DapperProject/wwwroot/10.png)
 
-![](https://github.com/iremkosar/DapperProject/blob/a3570666d592a4bfbc7c0ecf5caf0be988484a4c/DapperProject/wwwroot/11.png)
+![](https://github.com/iremkosar/DapperProject/blob/621ed701b115879b62488c44aa25b0c61d4f24d3/DapperProject/wwwroot/11.png)
+
+
 
 
 
