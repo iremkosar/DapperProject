@@ -1,0 +1,176 @@
+﻿@model List<DapperProject.Dtos.OwnerDtos.ResultOwnerDto>
+
+@{
+    ViewData["Title"] = "Sahip Listesi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages  = ViewBag.TotalPages;
+    int totalCount  = ViewBag.TotalCount;
+    string fullName = ViewBag.FullName ?? "";
+    string city     = ViewBag.City     ?? "";
+    string gender   = ViewBag.Gender   ?? "";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h5 style="color:#e2e8f0;font-weight:500;margin:0">Sahip Listesi</h5>
+        <span style="font-size:12px;color:#94a3b8">Toplam <span style="color:#22d3ee">@totalCount.ToString("N0")</span> sahip listeleniyor</span>
+    </div>    
+       <div class="d-flex gap-2">
+        <a href="/Pet/ExportExcel" class="tb-btn">
+            <i class="bi bi-download"></i> Excel İndir
+        </a>
+        <a href="/Owner/CreateOwner" class="btn-primary-dark">
+            <i class="bi bi-plus"></i> Yeni Sahip
+        </a>
+    </div>
+
+
+</div>
+
+<!-- FİLTRELEME -->
+<div class="dark-card mb-4">
+    <form method="get" action="/Owner/OwnerList">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="dark-label">Ad Soyad</label>
+                <input type="text" name="fullName" value="@fullName" class="dark-input" placeholder="Ad soyad ara..." />
+            </div>
+            <div class="col-md-3">
+                <label class="dark-label">Şehir</label>
+                <select name="city" class="dark-select">
+                    <option value="">Tümü</option>
+                    @foreach (var c in new[]{"İstanbul","Ankara","İzmir","Bursa","Antalya","Adana","Konya","Gaziantep","Mersin","Kayseri"})
+                    {
+                        <option value="@c" @@(city == c ? "selected" : "")>@c</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="dark-label">Cinsiyet</label>
+                <select name="gender" class="dark-select">
+                    <option value="">Tümü</option>
+                    <option value="E" @@(gender == "E" ? "selected" : "")>Erkek</option>
+                    <option value="K" @@(gender == "K" ? "selected" : "")>Kadın</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn-primary-dark w-100">
+                    <i class="bi bi-search"></i> Filtrele
+                </button>
+                <a href="/Owner/OwnerList" class="tb-btn w-100 justify-content-center">
+                    <i class="bi bi-x"></i>
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- TABLO -->
+<div class="dark-card mb-3">
+    <table class="dark-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Ad Soyad</th>
+                <th>Cinsiyet</th>
+                <th>Telefon</th>
+                <th>E-posta</th>
+                <th>Şehir</th>
+                <th>Kayıt Tarihi</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var owner in Model)
+                {
+                    <tr>
+                        <td style="color:#94a3b8">@owner.OwnerId</td>
+                        <td class="cell-name">@owner.FullName</td>
+                        <td>
+                            @if (owner.Gender?.Trim() == "E")
+                            {
+                                <span style="color:#38bdf8"><i class="bi bi-gender-male"></i> Erkek</span>
+                            }
+                            else
+                            {
+                                <span style="color:#f472b6"><i class="bi bi-gender-female"></i> Kadın</span>
+                            }
+                        </td>
+                        <td>@owner.Phone</td>
+                        <td style="font-size:12px;color:#6b7280">@owner.Email</td>
+                        <td>
+                            <span style="background:#0e3a4a;color:#22d3ee;font-size:11px;padding:2px 8px;border-radius:99px;">
+                                @owner.City
+                            </span>
+                        </td>
+                        <td style="font-size:12px;color:#6b7280">@owner.RegisteredAt</td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a href="/Owner/UpdateOwner/@owner.OwnerId" class="btn-edit-dark">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="/Owner/DeleteOwner/@owner.OwnerId"
+                                   onclick="return confirm('Bu sahibi silmek istediğinize emin misiniz?')"
+                                   class="btn-danger-dark">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                                <a href="/Owner/OwnerDetail/@owner.OwnerId" class="btn-edit-dark">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8" style="text-align:center;padding:40px;color:#94a3b8">
+                        <i class="bi bi-people" style="font-size:32px;display:block;margin-bottom:8px"></i>
+                        Sahip bulunamadı
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- SAYFALAMA -->
+<div class="d-flex align-items-center justify-content-between">
+    <span style="font-size:12px;color:#94a3b8">
+        Sayfa <span style="color:#e2e8f0">@currentPage</span> / <span style="color:#e2e8f0">@totalPages</span>
+        &nbsp;·&nbsp; Toplam <span style="color:#22d3ee">@totalCount.ToString("N0")</span> kayıt
+    </span>
+    <div class="pagination-dark">
+        @if (currentPage > 1)
+        {
+            <a href="/Owner/OwnerList?fullName=@fullName&city=@city&gender=@gender&page=1" class="page-btn">
+                <i class="bi bi-chevron-double-left"></i>
+            </a>
+            <a href="/Owner/OwnerList?fullName=@fullName&city=@city&gender=@gender&page=@(currentPage-1)" class="page-btn">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+        }
+        @{
+            int startPage = Math.Max(1, currentPage - 2);
+            int endPage   = Math.Min(totalPages, currentPage + 2);
+        }
+        @for (int i = startPage; i <= endPage; i++)
+        {
+            <a href="/Owner/OwnerList?fullName=@fullName&city=@city&gender=@gender&page=@i"
+               class="page-btn @(i == currentPage ? "active" : "")">@i</a>
+        }
+        @if (currentPage < totalPages)
+        {
+            <a href="/Owner/OwnerList?fullName=@fullName&city=@city&gender=@gender&page=@(currentPage+1)" class="page-btn">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+            <a href="/Owner/OwnerList?fullName=@fullName&city=@city&gender=@gender&page=@totalPages" class="page-btn">
+                <i class="bi bi-chevron-double-right"></i>
+            </a>
+        }
+    </div>
+</div>

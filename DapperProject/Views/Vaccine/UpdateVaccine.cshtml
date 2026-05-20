@@ -1,0 +1,62 @@
+﻿@model DapperProject.Dtos.VaccineDtos.GetVaccineByIdDto
+@{
+    ViewData["Title"] = "Aşı Kaydı Güncelle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h5 style="color:#e2e8f0;font-weight:500;margin:0">Aşı Kaydı Güncelle</h5>
+        <span style="font-size:12px;color:#444466">Aşı #@Model.VaccineId bilgilerini güncelleyin</span>
+    </div>
+    <a href="/Vaccine/VaccineList" class="tb-btn">
+        <i class="bi bi-arrow-left"></i> Geri Dön
+    </a>
+</div>
+
+<div class="dark-card" style="max-width:700px;">
+    <form method="post" action="/Vaccine/UpdateVaccine">
+        <input type="hidden" name="VaccineId" value="@Model.VaccineId" />
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="dark-label">Hayvan ID</label>
+                <input type="number" name="PetId" value="@Model.PetId" class="dark-input" required />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Veteriner ID</label>
+                <input type="number" name="VetId" value="@Model.VetId" class="dark-input" required />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Aşı Adı</label>
+                <select name="VaccineName" class="dark-select">
+                    @foreach (var v in new[]{"Kuduz","FPV-FHV-FCV (Üçlü)","FeLV (Lösemi)","Klamidya","DHPP (Dörtlü)","Leptospira","Kennel Cough","Bordetella","Polioma Virüsü","Newcastle","Mixomatozis","VHD","Salmonella"})
+                    {
+                        <option value="@v" @@(Model.VaccineName == v ? "selected" : "")>@v</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Seri No</label>
+                <input type="text" name="BatchNo" value="@Model.BatchNo" class="dark-input" />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Aşı Tarihi</label>
+                <input type="text" name="VaccineDate" value="@Model.VaccineDate" class="dark-input" required />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Sonraki Aşı Tarihi</label>
+                <input type="text" name="NextDueDate" value="@Model.NextDueDate" class="dark-input" required />
+            </div>
+            <div class="col-12 d-flex gap-2 mt-2">
+                <button type="submit" class="btn-primary-dark">
+                    <i class="bi bi-check-lg"></i> Güncelle
+                </button>
+                <a href="/Vaccine/VaccineList" class="tb-btn">
+                    <i class="bi bi-x"></i> İptal
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+

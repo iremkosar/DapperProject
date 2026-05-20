@@ -1,0 +1,157 @@
+﻿@model DapperProject.Dtos.TreatmentDtos.GetTreatmentByIdDto
+@using DapperProject.Dtos.TreatmentDtos
+@{
+    ViewData["Title"] = "Tedavi Detayı";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var prescriptions = ViewBag.Prescriptions as List<ResultPrescriptionDto>;
+    decimal totalMedCost = prescriptions?.Sum(p => p.UnitPrice * p.Quantity * p.DosageDays) ?? 0;
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h5 style="color:#e2e8f0;font-weight:500;margin:0">Tedavi Detayı</h5>
+        <span style="font-size:12px;color:#64748b">Tedavi #@Model.TreatmentId — @Model.PetName</span>
+    </div>
+    <a href="/Treatment/TreatmentList" class="tb-btn">
+        <i class="bi bi-arrow-left"></i> Geri Dön
+    </a>
+</div>
+
+<div class="row g-3 mb-4">
+    <!-- Tedavi Bilgileri -->
+    <div class="col-md-6">
+        <div class="dark-card h-100">
+            <div class="dark-card-title">
+                <span style="color:#22d3ee;font-size:14px;font-weight:500;">
+                    <i class="bi bi-clipboard-pulse me-2"></i>Tedavi Bilgileri
+                </span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Hayvan</div>
+                    <div style="font-size:14px;color:#e2e8f0;font-weight:500;">@Model.PetName</div>
+                    <div style="font-size:11px;color:#6b7280;">@Model.SpeciesName</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Sahip</div>
+                    <div style="font-size:14px;color:#e2e8f0;">@Model.OwnerName</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Veteriner</div>
+                    <div style="font-size:14px;color:#e2e8f0;">@Model.VetName</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Tedavi Tarihi</div>
+                    <div style="font-size:14px;color:#e2e8f0;">@Model.TreatmentDate</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Tanı</div>
+                    <span style="background:#1e1b4b;color:#818cf8;font-size:12px;padding:3px 10px;border-radius:99px;">
+                        @Model.Diagnosis
+                    </span>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Toplam Maliyet</div>
+                    <div style="font-size:18px;color:#10b981;font-weight:600;">₺@Model.TotalCost.ToString("N2")</div>
+                </div>
+            </div>
+            <div style="margin-top:14px;padding-top:14px;border-top:1px solid #13132a;">
+                <div style="font-size:11px;color:#64748b;margin-bottom:5px;">Tedavi Notları</div>
+                <div style="font-size:13px;color:#9ca3af;line-height:1.6;">@Model.Notes</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Özet Kartlar -->
+    <div class="col-md-6">
+        <div class="row g-3">
+            <div class="col-6">
+                <div class="stat-card c1">
+                    <div class="stat-label">Reçetedeki İlaç</div>
+                    <div class="stat-value">@(prescriptions?.Count ?? 0)</div>
+                    <span class="stat-badge" style="background:#0e3a4a;color:#22d3ee">Adet</span>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-card c2">
+                    <div class="stat-label">Tahmini İlaç Maliyeti</div>
+                    <div class="stat-value" style="font-size:16px;">₺@totalMedCost.ToString("N0")</div>
+                    <span class="stat-badge" style="background:#052e16;color:#10b981">Toplam</span>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-card c3">
+                    <div class="stat-label">Randevu ID</div>
+                    <div class="stat-value" style="font-size:18px;">@Model.AppointmentId</div>
+                    <span class="stat-badge" style="background:#1e1b4b;color:#818cf8">Bağlı</span>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-card c4">
+                    <div class="stat-label">Tedavi ID</div>
+                    <div class="stat-value" style="font-size:18px;">@Model.TreatmentId</div>
+                    <span class="stat-badge" style="background:#2d1f00;color:#f59e0b">Kayıt</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reçete / İlaçlar -->
+<div class="dark-card">
+    <div class="dark-card-title">
+        <span style="color:#e2e8f0;font-size:14px;font-weight:500;">
+            <i class="bi bi-capsule me-2"></i>Reçete — Yazılan İlaçlar
+        </span>
+        <span>@(prescriptions?.Count ?? 0) ilaç</span>
+    </div>
+    <table class="dark-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>İlaç Adı</th>
+                <th>Etken Madde</th>
+                <th>Kategori</th>
+                <th>Birim Fiyat</th>
+                <th>Kullanım Süresi</th>
+                <th>Kullanım Sıklığı</th>
+                <th>Adet</th>
+                <th>Toplam</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (prescriptions != null && prescriptions.Any())
+            {
+                @foreach (var p in prescriptions)
+                {
+                    decimal total = p.UnitPrice * p.Quantity * p.DosageDays;
+                    <tr>
+                        <td style="color:#64748b">@p.PrescriptionId</td>
+                        <td class="cell-name">@p.MedicineName</td>
+                        <td style="font-size:12px;color:#6b7280">@p.ActiveIngredient</td>
+                        <td>
+                            <span style="background:#0e3a4a;color:#22d3ee;font-size:11px;padding:2px 8px;border-radius:99px;">
+                                @p.Category
+                            </span>
+                        </td>
+                        <td style="color:#f59e0b;">₺@p.UnitPrice.ToString("N2")</td>
+                        <td>@p.DosageDays gün</td>
+                        <td style="font-size:12px;color:#9ca3af">@p.Frequency</td>
+                        <td>@p.Quantity kutu</td>
+                        <td style="color:#10b981;font-weight:500;">₺@total.ToString("N2")</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="9" style="text-align:center;padding:30px;color:#64748b">
+                        Reçete bilgisi bulunamadı
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+

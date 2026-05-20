@@ -1,0 +1,54 @@
+﻿@model DapperProject.Dtos.VetDtos.GetVetByIdDto
+@{
+    ViewData["Title"] = "Veteriner Güncelle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h5 style="color:#e2e8f0;font-weight:500;margin:0">Veteriner Güncelle</h5>
+        <span style="font-size:12px;color:#444466">Veteriner #@Model.VetId bilgilerini güncelleyin</span>
+    </div>
+    <a href="/Vet/VetList" class="tb-btn">
+        <i class="bi bi-arrow-left"></i> Geri Dön
+    </a>
+</div>
+
+<div class="dark-card" style="max-width:700px;">
+    <form method="post" action="/Vet/UpdateVet">
+        <input type="hidden" name="VetId" value="@Model.VetId" />
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="dark-label">Ad Soyad</label>
+                <input type="text" name="FullName" value="@Model.FullName" class="dark-input" required />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Uzmanlık</label>
+                <select name="Specialty" class="dark-select">
+                    @foreach (var s in new[]{"Genel Pratisyen","Cerrahi","Dermatoloji","Kardiyoloji","Onkoloji","Nöroloji","Göz Hastalıkları","Diş Hekimliği","Egzotik Hayvanlar"})
+                    {
+                        <option value="@s" @@(Model.Specialty == s ? "selected" : "")>@s</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Telefon</label>
+                <input type="text" name="Phone" value="@Model.Phone" class="dark-input" required />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">E-posta</label>
+                <input type="email" name="Email" value="@Model.Email" class="dark-input" />
+            </div>
+            <div class="col-12 d-flex gap-2 mt-2">
+                <button type="submit" class="btn-primary-dark">
+                    <i class="bi bi-check-lg"></i> Güncelle
+                </button>
+                <a href="/Vet/VetList" class="tb-btn">
+                    <i class="bi bi-x"></i> İptal
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+

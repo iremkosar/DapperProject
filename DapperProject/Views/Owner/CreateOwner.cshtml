@@ -1,0 +1,60 @@
+﻿@model DapperProject.Dtos.OwnerDtos.CreateOwnerDto
+@{
+    ViewData["Title"] = "Yeni Sahip";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h5 style="color:#e2e8f0;font-weight:500;margin:0">Yeni Sahip Ekle</h5>
+        <span style="font-size:12px;color:#444466">Yeni hayvan sahibi kaydı oluşturun</span>
+    </div>
+    <a href="/Owner/OwnerList" class="tb-btn">
+        <i class="bi bi-arrow-left"></i> Geri Dön
+    </a>
+</div>
+
+<div class="dark-card" style="max-width:700px;">
+    <form method="post" action="/Owner/CreateOwner">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="dark-label">Ad Soyad</label>
+                <input type="text" name="FullName" class="dark-input" placeholder="Ad soyad giriniz" required />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Cinsiyet</label>
+                <select name="Gender" class="dark-select">
+                    <option value="E">Erkek</option>
+                    <option value="K">Kadın</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Telefon</label>
+                <input type="text" name="Phone" class="dark-input" placeholder="05xx xxx xx xx" required />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">E-posta</label>
+                <input type="email" name="Email" class="dark-input" placeholder="ornek@mail.com" />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Şehir</label>
+                <select name="City" class="dark-select">
+                    @foreach (var c in new[] { "İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Adana", "Konya", "Gaziantep", "Mersin", "Kayseri" })
+                    {
+                        <option value="@c">@c</option>
+                    }
+                </select>
+            </div>
+            <div class="col-12 d-flex gap-2 mt-2">
+                <button type="submit" class="btn-primary-dark">
+                    <i class="bi bi-check-lg"></i> Kaydet
+                </button>
+                <a href="/Owner/OwnerList" class="tb-btn">
+                    <i class="bi bi-x"></i> İptal
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+

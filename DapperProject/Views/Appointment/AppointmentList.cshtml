@@ -1,0 +1,186 @@
+﻿@model List<DapperProject.Dtos.AppointmentDtos.ResultAppointmentDto>
+@{
+    ViewData["Title"] = "Randevu Listesi";
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages  = ViewBag.TotalPages;
+    int totalCount  = ViewBag.TotalCount;
+    string petName  = ViewBag.PetName ?? "";
+    string status   = ViewBag.Status  ?? "";
+    string city     = ViewBag.City    ?? "";
+    string vetName  = ViewBag.VetName ?? "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- HEADER -->
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h5 style="color:#e2e8f0;font-weight:500;margin:0">Randevu Listesi</h5>
+        <span style="font-size:12px;color:#94a3b8">Toplam <span style="color:#22d3ee">@totalCount.ToString("N0")</span> randevu listeleniyor</span>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="/Appointment/ExportExcel?petName=@petName&status=@status&city=@city&vetName=@vetName" class="tb-btn">
+            <i class="bi bi-download"></i> Excel İndir
+        </a>
+        <a href="/Appointment/CreateAppointment" class="btn-primary-dark">
+            <i class="bi bi-plus"></i> Yeni Randevu
+        </a>
+    </div>
+</div>
+
+<!-- FİLTRELEME FORMU -->
+<div class="dark-card mb-4">
+    <form method="get" action="/Appointment/AppointmentList">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="dark-label">Hayvan Adı</label>
+                <input type="text" name="petName" value="@petName"
+                       class="dark-input" placeholder="Hayvan adı ara..." />
+            </div>
+            <div class="col-md-2">
+                <label class="dark-label">Durum</label>
+                <select name="status" class="dark-select">
+                    <option value="">Tümü</option>
+                    <option value="Tamamlandı"   @@(status == "Tamamlandı"   ? "selected" : "")>Tamamlandı</option>
+                    <option value="Bekliyor"      @@(status == "Bekliyor"      ? "selected" : "")>Bekliyor</option>
+                    <option value="İptal"         @@(status == "İptal"         ? "selected" : "")>İptal</option>
+                    <option value="Devam Ediyor"  @@(status == "Devam Ediyor"  ? "selected" : "")>Devam Ediyor</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="dark-label">Şehir</label>
+                <select name="city" class="dark-select">
+                    <option value="">Tümü</option>
+                    @foreach (var c in new[]{"İstanbul","Ankara","İzmir","Bursa","Antalya","Adana","Konya","Gaziantep","Mersin","Kayseri"})
+                    {
+                        <option value="@c" @@(city == c ? "selected" : "")>@c</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="dark-label">Veteriner</label>
+                <input type="text" name="vetName" value="@vetName"
+                       class="dark-input" placeholder="Veteriner adı ara..." />
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn-primary-dark w-100">
+                    <i class="bi bi-search"></i> Filtrele
+                </button>
+                <a href="/Appointment/AppointmentList" class="tb-btn w-100 justify-content-center">
+                    <i class="bi bi-x"></i>
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- TABLO -->
+<div class="dark-card mb-3">
+    <table class="dark-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Hayvan / Tür</th>
+                <th>Sahip</th>
+                <th>Şehir</th>
+                <th>Veteriner</th>
+                <th>Tarih</th>
+                <th>Şikayet</th>
+                <th>Ücret</th>
+                <th>Durum</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var apt in Model)
+                {
+                    string badgeClass = apt.Status switch {
+                        "Tamamlandı"   => "badge-done",
+                        "Bekliyor"     => "badge-wait",
+                        "Devam Ediyor" => "badge-prog",
+                        "İptal"        => "badge-canc",
+                        _              => "badge-wait"
+                    };
+                    <tr>
+                        <td style="color:#94a3b8">@apt.AppointmentId</td>
+                        <td>
+                            <div class="cell-name">@apt.PetName</div>
+                            <div class="cell-sub">@apt.SpeciesName</div>
+                        </td>
+                        <td>@apt.OwnerName</td>
+                        <td>@apt.OwnerCity</td>
+                        <td>@apt.VetName</td>
+                        <td style="font-size:12px;">@apt.AppointmentDate</td>
+                        <td style="font-size:12px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">@apt.Complaint</td>
+                        <td style="color:#10b981;font-weight:500;">₺@apt.AppointmentFee</td>
+                        <td><span class="@badgeClass">@apt.Status</span></td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a href="/Appointment/UpdateAppointment/@apt.AppointmentId" class="btn-edit-dark">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="/Appointment/DeleteAppointment/@apt.AppointmentId"
+                                   onclick="return confirm('Bu randevuyu silmek istediğinize emin misiniz?')"
+                                   class="btn-danger-dark">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="10" style="text-align:center;padding:40px;color:#94a3b8">
+                        <i class="bi bi-calendar-x" style="font-size:32px;display:block;margin-bottom:8px"></i>
+                        Randevu bulunamadı
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- SAYFALAMA -->
+<div class="d-flex align-items-center justify-content-between">
+    <span style="font-size:12px;color:#94a3b8">
+        Sayfa <span style="color:#e2e8f0">@currentPage</span> / <span style="color:#e2e8f0">@totalPages</span>
+        &nbsp;·&nbsp; Toplam <span style="color:#22d3ee">@totalCount.ToString("N0")</span> kayıt
+    </span>
+    <div class="pagination-dark">
+        @if (currentPage > 1)
+        {
+            <a href="/Appointment/AppointmentList?petName=@petName&status=@status&city=@city&vetName=@vetName&page=1" class="page-btn">
+                <i class="bi bi-chevron-double-left"></i>
+            </a>
+            <a href="/Appointment/AppointmentList?petName=@petName&status=@status&city=@city&vetName=@vetName&page=@(currentPage-1)" class="page-btn">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+        }
+
+        @{
+            int startPage = Math.Max(1, currentPage - 2);
+            int endPage   = Math.Min(totalPages, currentPage + 2);
+        }
+
+        @for (int i = startPage; i <= endPage; i++)
+        {
+            <a href="/Appointment/AppointmentList?petName=@petName&status=@status&city=@city&vetName=@vetName&page=@i"
+               class="page-btn @(i == currentPage ? "active" : "")">@i</a>
+        }
+
+        @if (currentPage < totalPages)
+        {
+            <a href="/Appointment/AppointmentList?petName=@petName&status=@status&city=@city&vetName=@vetName&page=@(currentPage+1)" class="page-btn">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+            <a href="/Appointment/AppointmentList?petName=@petName&status=@status&city=@city&vetName=@vetName&page=@totalPages" class="page-btn">
+                <i class="bi bi-chevron-double-right"></i>
+            </a>
+        }
+    </div>
+</div>
+
+

@@ -1,0 +1,147 @@
+﻿@model List<DapperProject.Dtos.TreatmentDtos.ResultTreatmentDto>
+@{
+    ViewData["Title"] = "Tedavi Listesi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+    int totalCount = ViewBag.TotalCount;
+    string petName = ViewBag.PetName ?? "";
+    string diagnosis = ViewBag.Diagnosis ?? "";
+    string vetName = ViewBag.VetName ?? "";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h5 style="color:#e2e8f0;font-weight:500;margin:0">Tedavi Listesi</h5>
+        <span style="font-size:12px;color:#94a3b8">Toplam <span style="color:#22d3ee">@totalCount.ToString("N0")</span> tedavi kaydı listeleniyor</span>
+    </div>
+</div>
+
+<!-- FİLTRELEME -->
+<div class="dark-card mb-4">
+    <form method="get" action="/Treatment/TreatmentList">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="dark-label">Hayvan Adı</label>
+                <input type="text" name="petName" value="@petName" class="dark-input" placeholder="Hayvan adı ara..." />
+            </div>
+            <div class="col-md-3">
+                <label class="dark-label">Tanı</label>
+                <input type="text" name="diagnosis" value="@diagnosis" class="dark-input" placeholder="Tanı ara..." />
+            </div>
+            <div class="col-md-3">
+                <label class="dark-label">Veteriner</label>
+                <input type="text" name="vetName" value="@vetName" class="dark-input" placeholder="Veteriner adı ara..." />
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn-primary-dark w-100">
+                    <i class="bi bi-search"></i> Filtrele
+                </button>
+                <a href="/Treatment/TreatmentList" class="tb-btn w-100 justify-content-center">
+                    <i class="bi bi-x"></i>
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- TABLO -->
+<div class="dark-card mb-3">
+    <table class="dark-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Hayvan / Tür</th>
+                <th>Sahip</th>
+                <th>Veteriner</th>
+                <th>Tanı</th>
+                <th>Tarih</th>
+                <th>Toplam Maliyet</th>
+                <th>Reçete</th>
+                <th>Detay</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var t in Model)
+                {
+                    <tr>
+                        <td style="color:#94a3b8">@t.TreatmentId</td>
+                        <td>
+                            <div class="cell-name">@t.PetName</div>
+                            <div class="cell-sub">@t.SpeciesName</div>
+                        </td>
+                        <td>@t.OwnerName</td>
+                        <td>@t.VetName</td>
+                        <td>
+                            <span style="background:#1e1b4b;color:#818cf8;font-size:11px;padding:2px 8px;border-radius:99px;">
+                                @t.Diagnosis
+                            </span>
+                        </td>
+                        <td style="font-size:12px;color:#6b7280">@t.TreatmentDate</td>
+                        <td style="color:#10b981;font-weight:500;">₺@t.TotalCost.ToString("N2")</td>
+                        <td>
+                            <span style="background:#052e16;color:#10b981;font-size:11px;padding:2px 8px;border-radius:99px;">
+                                @t.PrescriptionCount ilaç
+                            </span>
+                        </td>
+                        <td>
+                            <a href="/Treatment/TreatmentDetail/@t.TreatmentId" class="btn-edit-dark">
+                                <i class="bi bi-eye"></i> Detay
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="9" style="text-align:center;padding:40px;color:#94a3b8">
+                        <i class="bi bi-clipboard-pulse" style="font-size:32px;display:block;margin-bottom:8px"></i>
+                        Tedavi kaydı bulunamadı
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- SAYFALAMA -->
+<div class="d-flex align-items-center justify-content-between">
+    <span style="font-size:12px;color:#94a3b8">
+        Sayfa <span style="color:#e2e8f0">@currentPage</span> / <span style="color:#e2e8f0">@totalPages</span>
+        &nbsp;·&nbsp; Toplam <span style="color:#22d3ee">@totalCount.ToString("N0")</span> kayıt
+    </span>
+    <div class="pagination-dark">
+        @if (currentPage > 1)
+        {
+            <a href="/Treatment/TreatmentList?petName=@petName&diagnosis=@diagnosis&vetName=@vetName&page=1" class="page-btn">
+                <i class="bi bi-chevron-double-left"></i>
+            </a>
+            <a href="/Treatment/TreatmentList?petName=@petName&diagnosis=@diagnosis&vetName=@vetName&page=@(currentPage-1)" class="page-btn">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+        }
+        @{
+            int startPage = Math.Max(1, currentPage - 2);
+            int endPage = Math.Min(totalPages, currentPage + 2);
+        }
+        @for (int i = startPage; i <= endPage; i++)
+        {
+            <a href="/Treatment/TreatmentList?petName=@petName&diagnosis=@diagnosis&vetName=@vetName&page=@i"
+               class="page-btn @(i == currentPage ? "active" : "")">@i</a>
+        }
+        @if (currentPage < totalPages)
+        {
+            <a href="/Treatment/TreatmentList?petName=@petName&diagnosis=@diagnosis&vetName=@vetName&page=@(currentPage+1)" class="page-btn">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+            <a href="/Treatment/TreatmentList?petName=@petName&diagnosis=@diagnosis&vetName=@vetName&page=@totalPages" class="page-btn">
+                <i class="bi bi-chevron-double-right"></i>
+            </a>
+        }
+    </div>
+</div>
+
+

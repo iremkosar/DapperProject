@@ -1,0 +1,212 @@
+﻿@model DapperProject.Dtos.OwnerDtos.OwnerDetailDto
+@using DapperProject.Dtos.OwnerDtos
+@{
+    ViewData["Title"] = "Sahip Detayı";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var pets = ViewBag.Pets as List<OwnerPetDto>;
+    var appointments = ViewBag.Appointments as List<OwnerAppointmentDto>;
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h5 style="color:#e2e8f0;font-weight:500;margin:0">Sahip Detayı</h5>
+        <span style="font-size:12px;color:#64748b">@Model.FullName — #@Model.OwnerId</span>
+    </div>
+    <a href="/Owner/OwnerList" class="tb-btn">
+        <i class="bi bi-arrow-left"></i> Geri Dön
+    </a>
+</div>
+
+<!-- ÜST KARTLAR -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="dark-card h-100">
+            <div class="dark-card-title">
+                <span style="color:#22d3ee;font-size:14px;font-weight:500;">
+                    <i class="bi bi-person me-2"></i>Sahip Bilgileri
+                </span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Ad Soyad</div>
+                    <div style="font-size:14px;color:#e2e8f0;font-weight:500;">@Model.FullName</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Cinsiyet</div>
+                    <div style="font-size:14px;">
+                        @if (Model.Gender?.Trim() == "E")
+                        {
+                            <span style="color:#38bdf8"><i class="bi bi-gender-male"></i> Erkek</span>
+                        }
+                        else
+                        {
+                            <span style="color:#f472b6"><i class="bi bi-gender-female"></i> Kadın</span>
+                        }
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Telefon</div>
+                    <div style="font-size:14px;color:#e2e8f0;">@Model.Phone</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">E-posta</div>
+                    <div style="font-size:13px;color:#6b7280;">@Model.Email</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Şehir</div>
+                    <span style="background:#0e3a4a;color:#22d3ee;font-size:12px;padding:3px 10px;border-radius:99px;">@Model.City</span>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Kayıt Tarihi</div>
+                    <div style="font-size:13px;color:#6b7280;">@Model.RegisteredAt</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row g-3">
+            <div class="col-6">
+                <div class="stat-card c1">
+                    <div class="stat-label">Toplam Hayvan</div>
+                    <div class="stat-value">@Model.TotalPets</div>
+                    <span class="stat-badge" style="background:#0e3a4a;color:#22d3ee">Kayıtlı</span>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-card c2">
+                    <div class="stat-label">Toplam Randevu</div>
+                    <div class="stat-value">@Model.TotalAppointments</div>
+                    <span class="stat-badge" style="background:#052e16;color:#10b981">Geçmiş</span>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="stat-card c3">
+                    <div class="stat-label">Toplam Harcama</div>
+                    <div class="stat-value">₺@Model.TotalSpent.ToString("N2")</div>
+                    <span class="stat-badge" style="background:#1e1b4b;color:#818cf8">Tedavi maliyeti</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- HAYVANLAR -->
+<div class="dark-card mb-4">
+    <div class="dark-card-title">
+        <span style="color:#e2e8f0;font-size:14px;font-weight:500;">
+            <i class="bi bi-heart me-2"></i>Hayvanları
+        </span>
+        <span>@(pets?.Count ?? 0) hayvan</span>
+    </div>
+    <table class="dark-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Ad</th>
+                <th>Tür</th>
+                <th>Irk</th>
+                <th>Cinsiyet</th>
+                <th>Doğum Tarihi</th>
+                <th>Kısırlaştırıldı</th>
+                <th>Ağırlık</th>
+                <th>Randevu</th>
+                <th>İşlem</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (pets != null && pets.Any())
+            {
+                @foreach (var pet in pets)
+                {
+                    <tr>
+                        <td style="color:#64748b">@pet.PetId</td>
+                        <td class="cell-name">@pet.Name</td>
+                        <td><span style="background:#052e16;color:#10b981;font-size:11px;padding:2px 8px;border-radius:99px;">@pet.SpeciesName</span></td>
+                        <td style="font-size:12px;color:#6b7280">@pet.BreedName</td>
+                        <td>
+                            @if (pet.Gender == "Erkek")
+                            {
+                                <span style="color:#38bdf8"><i class="bi bi-gender-male"></i></span>
+                            }
+                            else
+                            {
+                                <span style="color:#f472b6"><i class="bi bi-gender-female"></i></span>
+                            }
+                        </td>
+                        <td style="font-size:12px;color:#6b7280">@pet.BirthDate</td>
+                        <td>@(pet.IsNeutered ? "<span class='badge-done'>Evet</span>" : "<span class='badge-canc'>Hayır</span>")</td>
+                        <td style="color:#f59e0b;">@pet.Weight kg</td>
+                        <td><span style="background:#1e1b4b;color:#818cf8;font-size:11px;padding:2px 8px;border-radius:99px;">@pet.AppointmentCount randevu</span></td>
+                        <td>
+                            <a href="/Pet/UpdatePet/@pet.PetId" class="btn-edit-dark">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="10" style="text-align:center;padding:20px;color:#64748b">Hayvan kaydı bulunamadı</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- SON RANDEVULAR -->
+<div class="dark-card">
+    <div class="dark-card-title">
+        <span style="color:#e2e8f0;font-size:14px;font-weight:500;">
+            <i class="bi bi-calendar-check me-2"></i>Son Randevular
+        </span>
+        <span>Son 10 randevu</span>
+    </div>
+    <table class="dark-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Hayvan</th>
+                <th>Veteriner</th>
+                <th>Tarih</th>
+                <th>Şikayet</th>
+                <th>Ücret</th>
+                <th>Durum</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (appointments != null && appointments.Any())
+            {
+                @foreach (var apt in appointments)
+                {
+                    string badgeClass = apt.Status switch
+                    {
+                        "Tamamlandı" => "badge-done",
+                        "Bekliyor" => "badge-wait",
+                        "Devam Ediyor" => "badge-prog",
+                        "İptal" => "badge-canc",
+                        _ => "badge-wait"
+                    };
+                    <tr>
+                        <td style="color:#64748b">@apt.AppointmentId</td>
+                        <td class="cell-name">@apt.PetName</td>
+                        <td>@apt.VetName</td>
+                        <td style="font-size:12px;color:#6b7280">@apt.AppointmentDate</td>
+                        <td style="font-size:12px;">@apt.Complaint</td>
+                        <td style="color:#10b981;font-weight:500;">₺@apt.AppointmentFee</td>
+                        <td><span class="@badgeClass">@apt.Status</span></td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" style="text-align:center;padding:20px;color:#64748b">Randevu kaydı bulunamadı</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+

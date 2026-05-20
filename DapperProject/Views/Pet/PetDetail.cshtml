@@ -1,0 +1,226 @@
+﻿@model DapperProject.Dtos.PetDtos.PetDetailDto
+@using DapperProject.Dtos.PetDtos
+@{
+    ViewData["Title"] = "Hayvan Detayı";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var appointments = ViewBag.Appointments as List<PetAppointmentDto>;
+    var vaccines = ViewBag.Vaccines as List<PetVaccineDto>;
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h5 style="color:#e2e8f0;font-weight:500;margin:0">Hayvan Detayı</h5>
+        <span style="font-size:12px;color:#64748b">@Model.Name — #@Model.PetId</span>
+    </div>
+    <a href="/Pet/PetList" class="tb-btn">
+        <i class="bi bi-arrow-left"></i> Geri Dön
+    </a>
+</div>
+
+<!-- ÜST KARTLAR -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="dark-card h-100">
+            <div class="dark-card-title">
+                <span style="color:#22d3ee;font-size:14px;font-weight:500;">
+                    <i class="bi bi-heart me-2"></i>Hayvan Bilgileri
+                </span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Ad</div>
+                    <div style="font-size:18px;color:#e2e8f0;font-weight:600;">@Model.Name</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Tür / Irk</div>
+                    <div>
+                        <span style="background:#052e16;color:#10b981;font-size:11px;padding:2px 8px;border-radius:99px;">@Model.SpeciesName</span>
+                        <div style="font-size:12px;color:#6b7280;margin-top:3px;">@Model.BreedName</div>
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Sahip</div>
+                    <div style="font-size:14px;color:#e2e8f0;">@Model.OwnerName</div>
+                    <div style="font-size:12px;color:#6b7280;">@Model.OwnerPhone</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Cinsiyet</div>
+                    <div style="font-size:14px;">
+                        @if (Model.Gender == "Erkek")
+                        {
+                            <span style="color:#38bdf8"><i class="bi bi-gender-male"></i> Erkek</span>
+                        }
+                        else
+                        {
+                            <span style="color:#f472b6"><i class="bi bi-gender-female"></i> Dişi</span>
+                        }
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Doğum Tarihi</div>
+                    <div style="font-size:14px;color:#e2e8f0;">@Model.BirthDate</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Ağırlık</div>
+                    <div style="font-size:14px;color:#f59e0b;font-weight:500;">@Model.Weight kg</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#64748b;margin-bottom:3px;">Kısırlaştırıldı</div>
+                    @if (Model.IsNeutered)
+                    {
+                        <span class="badge-done">Evet</span>
+                    }
+                    else
+                    {
+                        <span class="badge-canc">Hayır</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row g-3">
+            <div class="col-6">
+                <div class="stat-card c1">
+                    <div class="stat-label">Toplam Randevu</div>
+                    <div class="stat-value">@Model.TotalAppointments</div>
+                    <span class="stat-badge" style="background:#0e3a4a;color:#22d3ee">Geçmiş</span>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-card c2">
+                    <div class="stat-label">Toplam Aşı</div>
+                    <div class="stat-value">@Model.TotalVaccines</div>
+                    <span class="stat-badge" style="background:#052e16;color:#10b981">Kayıt</span>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-card c3">
+                    <div class="stat-label">Toplam Tedavi</div>
+                    <div class="stat-value">@Model.TotalTreatments</div>
+                    <span class="stat-badge" style="background:#1e1b4b;color:#818cf8">Geçmiş</span>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-card c4">
+                    <div class="stat-label">Toplam Harcama</div>
+                    <div class="stat-value" style="font-size:16px;">₺@Model.TotalSpent.ToString("N0")</div>
+                    <span class="stat-badge" style="background:#2d1f00;color:#f59e0b">Maliyet</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SON RANDEVULAR -->
+<div class="dark-card mb-4">
+    <div class="dark-card-title">
+        <span style="color:#e2e8f0;font-size:14px;font-weight:500;">
+            <i class="bi bi-calendar-check me-2"></i>Son Randevular
+        </span>
+        <span>Son 10 randevu</span>
+    </div>
+    <table class="dark-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Veteriner</th>
+                <th>Tarih</th>
+                <th>Şikayet</th>
+                <th>Ücret</th>
+                <th>Durum</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (appointments != null && appointments.Any())
+            {
+                @foreach (var apt in appointments)
+                {
+                    string badgeClass = apt.Status switch
+                    {
+                        "Tamamlandı" => "badge-done",
+                        "Bekliyor" => "badge-wait",
+                        "Devam Ediyor" => "badge-prog",
+                        "İptal" => "badge-canc",
+                        _ => "badge-wait"
+                    };
+                    <tr>
+                        <td style="color:#64748b">@apt.AppointmentId</td>
+                        <td>@apt.VetName</td>
+                        <td style="font-size:12px;color:#6b7280">@apt.AppointmentDate</td>
+                        <td style="font-size:12px;">@apt.Complaint</td>
+                        <td style="color:#10b981;font-weight:500;">₺@apt.AppointmentFee</td>
+                        <td><span class="@badgeClass">@apt.Status</span></td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" style="text-align:center;padding:20px;color:#64748b">Randevu kaydı bulunamadı</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- AŞI GEÇMİŞİ -->
+<div class="dark-card">
+    <div class="dark-card-title">
+        <span style="color:#e2e8f0;font-size:14px;font-weight:500;">
+            <i class="bi bi-shield-check me-2"></i>Aşı Geçmişi
+        </span>
+        <span>@(vaccines?.Count ?? 0) aşı kaydı</span>
+    </div>
+    <table class="dark-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Aşı Adı</th>
+                <th>Veteriner</th>
+                <th>Aşı Tarihi</th>
+                <th>Sonraki Tarih</th>
+                <th>Seri No</th>
+                <th>Durum</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (vaccines != null && vaccines.Any())
+            {
+                @foreach (var vac in vaccines)
+                {
+                    string badgeClass = "badge-done";
+                    string badgeText = "Normal";
+                    if (DateTime.TryParse(vac.NextDueDate, out DateTime nextDate))
+                    {
+                        if (nextDate < DateTime.Today)
+                        { badgeClass = "badge-canc"; badgeText = "Gecikmiş"; }
+                        else if (nextDate <= DateTime.Today.AddDays(30))
+                        { badgeClass = "badge-prog"; badgeText = "Yaklaşan"; }
+                    }
+                    <tr>
+                        <td style="color:#64748b">@vac.VaccineId</td>
+                        <td>
+                            <span style="background:#1e1b4b;color:#818cf8;font-size:11px;padding:2px 8px;border-radius:99px;">
+                                @vac.VaccineName
+                            </span>
+                        </td>
+                        <td>@vac.VetName</td>
+                        <td style="font-size:12px;color:#6b7280">@vac.VaccineDate</td>
+                        <td style="font-size:12px;color:#e2e8f0">@vac.NextDueDate</td>
+                        <td style="font-size:11px;color:#64748b">@vac.BatchNo</td>
+                        <td><span class="@badgeClass">@badgeText</span></td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" style="text-align:center;padding:20px;color:#64748b">Aşı kaydı bulunamadı</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+

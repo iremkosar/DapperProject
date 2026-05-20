@@ -1,0 +1,529 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VetAnalytics — @ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #0a0a1a;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            display: flex;
+            min-height: 100vh;
+            color: #cbd5e1;
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 200px;
+            min-height: 100vh;
+            background: #070714;
+            border-right: 1px solid #13132a;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .sb-brand {
+            padding: 18px 16px;
+            border-bottom: 1px solid #13132a;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+            .sb-brand i {
+                color: #22d3ee;
+                font-size: 20px;
+            }
+
+        .sb-section {
+            font-size: 10px;
+            color: #64748b;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            padding: 14px 16px 5px;
+        }
+
+        .sb-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 13px;
+            color: #94a3b8;
+            padding: 8px 14px;
+            margin: 1px 8px;
+            border-radius: 7px;
+            text-decoration: none;
+            transition: all .15s;
+        }
+
+            .sb-item:hover {
+                background: #0f0f2a;
+                color: #a5b4fc;
+            }
+
+            .sb-item.active {
+                background: #0f0f2e;
+                color: #22d3ee;
+                border-left: 2px solid #22d3ee;
+            }
+
+            .sb-item i {
+                font-size: 16px;
+            }
+
+        /* ── MAIN ── */
+        .main-wrapper {
+            margin-left: 200px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ── TOPBAR ── */
+        .topbar {
+            background: #070714;
+            border-bottom: 1px solid #13132a;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .tb-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .tb-sub {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .tb-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tb-btn {
+            background: #0f0f2a;
+            border: 1px solid #1e1e3a;
+            color: #a5b4fc;
+            font-size: 12px;
+            padding: 6px 13px;
+            border-radius: 7px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: all .15s;
+        }
+
+            .tb-btn:hover {
+                background: #1a1a3e;
+                color: #c7d2fe;
+            }
+
+            .tb-btn.primary {
+                background: linear-gradient(135deg, #0ea5e9, #6366f1);
+                border: none;
+                color: #fff;
+            }
+
+                .tb-btn.primary:hover {
+                    opacity: .9;
+                }
+
+        .tb-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #22d3ee);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* ── CONTENT ── */
+        .page-content {
+            padding: 24px;
+            flex: 1;
+        }
+
+        /* ── CARDS ── */
+        .dark-card {
+            background: #0d0d20;
+            border: 1px solid #13132a;
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .dark-card-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #e2e8f0;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+            .dark-card-title span {
+                font-size: 11px;
+                color: #94a3b8;
+            }
+
+        /* ── STAT CARDS ── */
+        .stat-card {
+            background: #0d0d20;
+            border: 1px solid #13132a;
+            border-radius: 10px;
+            padding: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .stat-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+            }
+
+            .stat-card.c1::before {
+                background: linear-gradient(90deg, #22d3ee, transparent);
+            }
+
+            .stat-card.c2::before {
+                background: linear-gradient(90deg, #10b981, transparent);
+            }
+
+            .stat-card.c3::before {
+                background: linear-gradient(90deg, #6366f1, transparent);
+            }
+
+            .stat-card.c4::before {
+                background: linear-gradient(90deg, #f59e0b, transparent);
+            }
+
+            .stat-card.c5::before {
+                background: linear-gradient(90deg, #ef4444, transparent);
+            }
+
+            .stat-card.c6::before {
+                background: linear-gradient(90deg, #8b5cf6, transparent);
+            }
+
+        .stat-label {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .stat-badge {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 99px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        /* ── TABLES ── */
+        .dark-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .dark-table thead th {
+                font-size: 11px;
+                color: #94a3b8;
+                text-transform: uppercase;
+                letter-spacing: .05em;
+                padding: 8px 12px;
+                border-bottom: 1px solid #13132a;
+                font-weight: 500;
+            }
+
+            .dark-table tbody td {
+                padding: 10px 12px;
+                font-size: 13px;
+                color: #cbd5e1;
+                border-bottom: 1px solid #0f0f25;
+            }
+
+            .dark-table tbody tr:hover td {
+                background: #0f0f25;
+            }
+
+            .dark-table .cell-name {
+                color: #f1f5f9;
+                font-weight: 500;
+            }
+
+            .dark-table .cell-sub {
+                font-size: 11px;
+                color: #64748b;
+            }
+
+        /* ── BADGES ── */
+        .badge-done {
+            background: #052e16;
+            color: #10b981;
+            font-size: 11px;
+            padding: 3px 9px;
+            border-radius: 99px;
+        }
+
+        .badge-wait {
+            background: #1e3a5f;
+            color: #38bdf8;
+            font-size: 11px;
+            padding: 3px 9px;
+            border-radius: 99px;
+        }
+
+        .badge-prog {
+            background: #2d1f00;
+            color: #f59e0b;
+            font-size: 11px;
+            padding: 3px 9px;
+            border-radius: 99px;
+        }
+
+        .badge-canc {
+            background: #2d0a0a;
+            color: #ef4444;
+            font-size: 11px;
+            padding: 3px 9px;
+            border-radius: 99px;
+        }
+
+        /* ── FORMS ── */
+        .dark-input {
+            background: #0d0d20;
+            border: 1px solid #1e1e3a;
+            color: #e2e8f0;
+            border-radius: 7px;
+            padding: 8px 12px;
+            font-size: 13px;
+            width: 100%;
+            transition: border-color .15s;
+        }
+
+            .dark-input:focus {
+                outline: none;
+                border-color: #22d3ee;
+            }
+
+            .dark-input::placeholder {
+                color: #475569;
+            }
+
+        .dark-select {
+            background: #0d0d20;
+            border: 1px solid #1e1e3a;
+            color: #e2e8f0;
+            border-radius: 7px;
+            padding: 8px 12px;
+            font-size: 13px;
+            width: 100%;
+        }
+
+            .dark-select:focus {
+                outline: none;
+                border-color: #22d3ee;
+            }
+
+        .dark-label {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* ── BUTTONS ── */
+        .btn-primary-dark {
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            border: none;
+            color: #fff;
+            padding: 9px 20px;
+            border-radius: 7px;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: opacity .15s;
+        }
+
+            .btn-primary-dark:hover {
+                opacity: .9;
+                color: #fff;
+            }
+
+        .btn-danger-dark {
+            background: #2d0a0a;
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all .15s;
+        }
+
+            .btn-danger-dark:hover {
+                background: #ef4444;
+                color: #fff;
+            }
+
+        .btn-edit-dark {
+            background: #0f0f2e;
+            border: 1px solid #6366f1;
+            color: #818cf8;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all .15s;
+        }
+
+            .btn-edit-dark:hover {
+                background: #6366f1;
+                color: #fff;
+            }
+
+        /* ── PAGINATION ── */
+        .pagination-dark {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .page-btn {
+            background: #0d0d20;
+            border: 1px solid #1e1e3a;
+            color: #94a3b8;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all .15s;
+        }
+
+            .page-btn:hover {
+                background: #1a1a3e;
+                color: #a5b4fc;
+            }
+
+            .page-btn.active {
+                background: linear-gradient(135deg, #0ea5e9, #6366f1);
+                border: none;
+                color: #fff;
+            }
+
+            .page-btn.disabled {
+                opacity: .4;
+                pointer-events: none;
+            }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sb-brand">
+            <i class="bi bi-heart-pulse-fill"></i>
+            VetAnalytics
+        </div>
+
+       
+        <a href="/Dashboard/Index" class="sb-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <div class="sb-section">Yönetim</div>
+        <a href="/Appointment/AppointmentList" class="sb-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Appointment" ? "active" : "")">
+            <i class="bi bi-calendar-check"></i> Randevular
+        </a>
+
+        
+        <a href="/Pet/PetList" class="sb-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Pet" ? "active" : "")">
+            <i class="bi bi-heart"></i> Hayvanlar
+        </a>
+        <a href="/Owner/OwnerList" class="sb-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Owner" ? "active" : "")">
+            <i class="bi bi-people"></i> Sahipler
+        </a>
+        <a href="/Vet/VetList" class="sb-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Vet" ? "active" : "")">
+            <i class="bi bi-person-badge"></i> Veterinerler
+        </a>
+        <a href="/Vaccine/VaccineList" class="sb-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Vaccine" ? "active" : "")">
+            <i class="bi bi-shield-check"></i> Aşı Takibi
+        </a>
+        <a href="/Treatment/TreatmentList" class="sb-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Treatment" ? "active" : "")">
+            <i class="bi bi-clipboard-pulse"></i> Tedaviler
+        </a>
+       
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-wrapper">
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <div>
+                <div class="tb-title">@ViewData["Title"]</div>
+                <div class="tb-sub">Veteriner Klinik Analitik Platformu</div>
+            </div>
+            <div class="tb-right">             
+                <a href="#" class="tb-btn"><i class="bi bi-bell"></i></a>
+                <div class="tb-avatar">İK</div>
+            </div>
+        </div>
+
+        <!-- PAGE CONTENT -->
+        <div class="page-content">
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

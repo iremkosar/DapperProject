@@ -1,0 +1,63 @@
+﻿@model DapperProject.Dtos.AppointmentDtos.GetAppointmentByIdDto
+@{
+    ViewData["Title"] = "Randevu Güncelle";
+   
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h5 style="color:#e2e8f0;font-weight:500;margin:0">Randevu Güncelle</h5>
+        <span style="font-size:12px;color:#444466">Randevu #@Model.AppointmentId bilgilerini güncelleyin</span>
+    </div>
+    <a href="/Appointment/AppointmentList" class="tb-btn">
+        <i class="bi bi-arrow-left"></i> Geri Dön
+    </a>
+</div>
+
+<div class="dark-card" style="max-width:700px;">
+    <form method="post" action="/Appointment/UpdateAppointment">
+        <input type="hidden" name="AppointmentId" value="@Model.AppointmentId" />
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="dark-label">Hayvan ID</label>
+                <input type="number" name="PetId" value="@Model.PetId" class="dark-input" required />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Veteriner ID</label>
+                <input type="number" name="VetId" value="@Model.VetId" class="dark-input" required />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Randevu Tarihi</label>
+                <input type="text" name="AppointmentDate" value="@Model.AppointmentDate" class="dark-input" required />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Durum</label>
+                <select name="Status" class="dark-select">
+                    <option value="Bekliyor"     @@(Model.Status == "Bekliyor"     ? "selected" : "")>Bekliyor</option>
+                    <option value="Tamamlandı"   @@(Model.Status == "Tamamlandı"   ? "selected" : "")>Tamamlandı</option>
+                    <option value="Devam Ediyor" @@(Model.Status == "Devam Ediyor" ? "selected" : "")>Devam Ediyor</option>
+                    <option value="İptal"        @@(Model.Status == "İptal"        ? "selected" : "")>İptal</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Randevu Ücreti (₺)</label>
+                <input type="number" name="AppointmentFee" value="@Model.AppointmentFee" class="dark-input" required />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Şikayet</label>
+                <input type="text" name="Complaint" value="@Model.Complaint" class="dark-input" required />
+            </div>
+            <div class="col-12 d-flex gap-2 mt-2">
+                <button type="submit" class="btn-primary-dark">
+                    <i class="bi bi-check-lg"></i> Güncelle
+                </button>
+                <a href="/Appointment/AppointmentList" class="tb-btn">
+                    <i class="bi bi-x"></i> İptal
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+

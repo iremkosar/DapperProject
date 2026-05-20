@@ -1,0 +1,62 @@
+﻿@model DapperProject.Dtos.AppointmentDtos.CreateAppointmentDto
+
+@{
+    ViewData["Title"] = "Yeni Randevu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h5 style="color:#e2e8f0;font-weight:500;margin:0">Yeni Randevu Ekle</h5>
+        <span style="font-size:12px;color:#444466">Yeni randevu kaydı oluşturun</span>
+    </div>
+    <a href="/Appointment/AppointmentList" class="tb-btn">
+        <i class="bi bi-arrow-left"></i> Geri Dön
+    </a>
+</div>
+
+<div class="dark-card" style="max-width:700px;">
+    <form method="post" action="/Appointment/CreateAppointment">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="dark-label">Hayvan ID</label>
+                <input type="number" name="PetId" class="dark-input" placeholder="Hayvan ID giriniz" required />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Veteriner ID</label>
+                <input type="number" name="VetId" class="dark-input" placeholder="Veteriner ID giriniz" required />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Randevu Tarihi</label>
+                <input type="datetime-local" name="AppointmentDate" class="dark-input" required />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Durum</label>
+                <select name="Status" class="dark-select">
+                    <option value="Bekliyor">Bekliyor</option>
+                    <option value="Tamamlandı">Tamamlandı</option>
+                    <option value="Devam Ediyor">Devam Ediyor</option>
+                    <option value="İptal">İptal</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Randevu Ücreti (₺)</label>
+                <input type="number" name="AppointmentFee" class="dark-input" placeholder="Ücret giriniz" required />
+            </div>
+            <div class="col-md-6">
+                <label class="dark-label">Şikayet</label>
+                <input type="text" name="Complaint" class="dark-input" placeholder="Şikayet giriniz" required />
+            </div>
+            <div class="col-12 d-flex gap-2 mt-2">
+                <button type="submit" class="btn-primary-dark">
+                    <i class="bi bi-check-lg"></i> Kaydet
+                </button>
+                <a href="/Appointment/AppointmentList" class="tb-btn">
+                    <i class="bi bi-x"></i> İptal
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+

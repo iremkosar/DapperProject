@@ -1,0 +1,353 @@
+﻿@using DapperProject.Dtos.DashboardDtos
+
+@{
+    ViewData["Title"] = "Yönetici Paneli";
+    var summary = ViewBag.Summary as DashboardSummaryDto;
+    var monthly = ViewBag.Monthly as List<MonthlyAppointmentDto>;
+    var species = ViewBag.Species as List<SpeciesDistributionDto>;
+    var topVets = ViewBag.TopVets as List<TopVetDto>;
+    var cities = ViewBag.Cities as List<CityDistributionDto>;
+    var statusDist = ViewBag.StatusDist as List<AppointmentStatusDto>;
+    var revenue = ViewBag.Revenue as List<MonthlyRevenueDto>;
+    var completion = ViewBag.Completion as List<MonthlyCompletionDto>;
+    var recent = ViewBag.Recent as List<RecentAppointmentDto>;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+};
+    
+
+
+<!-- STAT CARDS -->
+<div class="row g-3 mb-4">
+    <div class="col">
+        <div class="stat-card c1">
+            <div class="stat-label"><i class="bi bi-people me-1"></i>Toplam Sahip</div>
+            <div class="stat-value">@summary.TotalOwners.ToString("N0")</div>
+            <span class="stat-badge" style="background:#0e3a4a;color:#22d3ee">Kayıtlı</span>
+        </div>
+    </div>
+    <div class="col">
+        <div class="stat-card c2">
+            <div class="stat-label"><i class="bi bi-heart me-1"></i>Toplam Hayvan</div>
+            <div class="stat-value">@summary.TotalPets.ToString("N0")</div>
+            <span class="stat-badge" style="background:#052e16;color:#10b981">Aktif</span>
+        </div>
+    </div>
+    <div class="col">
+        <div class="stat-card c3">
+            <div class="stat-label"><i class="bi bi-currency-dollar me-1"></i>Toplam Gelir</div>
+            <div class="stat-value">₺@((summary.TotalRevenue / 1000000).ToString("N1"))M</div>
+            <span class="stat-badge" style="background:#1e1b4b;color:#818cf8">↑ %8</span>
+        </div>
+    </div>
+    <div class="col">
+        <div class="stat-card c4">
+            <div class="stat-label"><i class="bi bi-calendar-check me-1"></i>Bekleyen Randevu</div>
+            <div class="stat-value">@summary.PendingAppointments.ToString("N0")</div>
+            <span class="stat-badge" style="background:#2d1f00;color:#f59e0b">Aktif</span>
+        </div>
+    </div>
+    <div class="col">
+        <div class="stat-card c5">
+            <div class="stat-label"><i class="bi bi-exclamation-triangle me-1"></i>Gecikmiş Aşı</div>
+            <div class="stat-value">@summary.OverdueVaccines.ToString("N0")</div>
+            <span class="stat-badge" style="background:#2d0a0a;color:#ef4444">Acil</span>
+        </div>
+    </div>
+    <div class="col">
+        <div class="stat-card c6">
+            <div class="stat-label"><i class="bi bi-check-circle me-1"></i>Tamamlanan</div>
+            <div class="stat-value">@((summary.TotalCompleted / 1000).ToString("N0"))K</div>
+            <span class="stat-badge" style="background:#2e1065;color:#a78bfa">Randevu</span>
+        </div>
+    </div>
+</div>
+
+<!-- CHARTS ROW 1 -->
+<div class="row g-3 mb-3">
+    <div class="col-md-6">
+        <div class="dark-card">
+            <div class="dark-card-title">Aylık Randevu Trendi <span>Son 12 ay</span></div>
+            <canvas id="lineChart" height="100"></canvas>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="dark-card" style="height:320px;">
+            <div class="dark-card-title">Tür Dağılımı <span>Hayvan</span></div>
+            <div style="height:260px; position:relative;">
+                <canvas id="doughnutChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="dark-card" style="height:320px;">
+            <div class="dark-card-title">Randevu Durumu <span>Genel</span></div>
+            <div style="height:260px; position:relative;">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CHARTS ROW 2 -->
+<div class="row g-3 mb-3">
+    <div class="col-md-4">
+        <div class="dark-card">
+            <div class="dark-card-title">Şehir Dağılımı <span>Sahip sayısı</span></div>
+            <canvas id="cityChart" height="130"></canvas>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="dark-card">
+            <div class="dark-card-title">Aylık Gelir <span>₺ bazında</span></div>
+            <canvas id="revenueChart" height="130"></canvas>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="dark-card">
+            <div class="dark-card-title">Tamamlanma Oranı <span>Aylık %</span></div>
+            <canvas id="completionChart" height="130"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- BOTTOM ROW -->
+<div class="row g-3">
+    <div class="col-md-7">
+        <div class="dark-card">
+            <div class="dark-card-title">Son Randevular <span>Bugün</span></div>
+            <table class="dark-table">
+                <thead>
+                    <tr>
+                        <th>Hayvan / Sahip</th>
+                        <th>Veteriner</th>
+                        <th>Şehir</th>
+                        <th>Tarih</th>
+                        <th>Durum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (recent != null)
+                    {
+                        @foreach (var apt in recent)
+                        {
+                            string badgeClass = apt.Status switch
+                            {
+                                "Tamamlandı" => "badge-done",
+                                "Bekliyor" => "badge-wait",
+                                "Devam Ediyor" => "badge-prog",
+                                "İptal" => "badge-canc",
+                                _ => "badge-wait"
+                            };
+                            <tr>
+                                <td><div class="cell-name">@apt.PetName</div><div class="cell-sub">@apt.OwnerName</div></td>
+                                <td>@apt.VetName</td>
+                                <td>@apt.City</td>
+                                <td>@apt.AppointmentDate</td>
+                                <td><span class="@badgeClass">@apt.Status</span></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="dark-card">
+            <div class="dark-card-title">En Yoğun Veterinerler <span>Bu ay</span></div>
+            @if (topVets != null)
+            {
+                int maxCount = topVets.Max(v => v.AppointmentCount);
+                @foreach (var vet in topVets)
+                {
+                    int pct = maxCount > 0 ? (int)((double)vet.AppointmentCount / maxCount * 100) : 0;
+                    string initials = string.Join("", vet.FullName.Replace("Dr. ", "").Split(' ').Take(2).Select(w => w[0]));
+                    <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #13132a">
+                        <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#6366f1);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff;flex-shrink:0">
+                            @initials
+                        </div>
+                        <div style="flex:1">
+                            <div style="font-size:12px;color:#e2e8f0;font-weight:500">@vet.FullName</div>
+                            <div style="background:#13132a;border-radius:3px;height:4px;margin-top:4px">
+                                <div style="width:@pct%;height:100%;border-radius:3px;background:linear-gradient(90deg,#22d3ee,#6366f1)"></div>
+                            </div>
+                        </div>
+                        <div style="font-size:12px;color:#22d3ee;font-weight:500">@vet.AppointmentCount.ToString("N0")</div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const gridColor = '#13132a';
+        const tickFont  = { family: 'Segoe UI', size: 10 };
+        const tooltip   = { backgroundColor:'#0d0d20', borderColor:'#1e1e3a', borderWidth:1, titleColor:'#e2e8f0', bodyColor:'#9ca3af' };
+
+        // ── Line Chart (Aylık Randevu)
+        const monthlyLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(monthly?.Select(m => m.Month) ?? new List<string>()));
+        const monthlyCounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(monthly?.Select(m => m.Count) ?? new List<int>()));
+        new Chart(document.getElementById('lineChart'), {
+            type: 'line',
+            data: {
+                labels: monthlyLabels,
+                datasets: [{
+                    label: 'Randevu',
+                    data: monthlyCounts,
+                    borderColor: '#22d3ee',
+                    backgroundColor: 'rgba(34,211,238,0.08)',
+                    tension: 0.4, fill: true,
+                    pointBackgroundColor: '#22d3ee',
+                    pointRadius: 3, borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false }, tooltip },
+                scales: {
+                    x: { ticks: { color:'#94a3b8', font: tickFont }, grid: { color: gridColor } },
+                    y: { ticks: { color:'#94a3b8', font: tickFont }, grid: { color: gridColor } }
+                }
+            }
+        });
+
+        // ── Doughnut Chart (Tür Dağılımı)
+        const speciesLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(species?.Select(s => s.SpeciesName) ?? new List<string>()));
+        const speciesCounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(species?.Select(s => s.Count) ?? new List<int>()));
+        new Chart(document.getElementById('doughnutChart'), {
+            type: 'doughnut',
+            data: {
+                labels: speciesLabels,
+                datasets: [{
+                    data: speciesCounts,
+                    backgroundColor: ['#22d3ee','#10b981','#f59e0b','#8b5cf6','#ef4444','#6366f1','#ec4899'],
+                    borderWidth: 0, hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                 maintainAspectRatio: false,
+                plugins: {
+                    legend: { position:'bottom', labels: { color:'#94a3b8', font: tickFont, boxWidth:10, padding:8 } },
+                    tooltip
+                },
+                cutout: '65%'
+            }
+        });
+
+             const statusLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(statusDist?.Select(s => s.Status) ?? new List<string>()));
+        const statusCounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(statusDist?.Select(s => s.Count) ?? new List<int>()));
+
+        new Chart(document.getElementById('statusChart'), {
+            type: 'pie',
+            data: {
+                labels: statusLabels,
+                datasets: [{
+                    data: statusCounts,
+                    backgroundColor: ['#10b981','#38bdf8','#f59e0b','#ef4444'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position:'bottom', labels: { color:'#94a3b8', font: tickFont, boxWidth:10, padding:8 } },
+                    tooltip
+                }
+            }
+        });
+
+        // ── Bar Chart (Şehir Dağılımı)
+        const cityLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(cities?.Select(c => c.City) ?? new List<string>()));
+        const cityCounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(cities?.Select(c => c.Count) ?? new List<int>()));
+        new Chart(document.getElementById('cityChart'), {
+            type: 'bar',
+            data: {
+                labels: cityLabels,
+                datasets: [{
+                    label: 'Sahip',
+                    data: cityCounts,
+                    backgroundColor: 'rgba(99,102,241,0.7)',
+                    borderRadius: 4, borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false }, tooltip },
+                scales: {
+                    x: { ticks: { color:'#94a3b8', font: tickFont }, grid: { color: gridColor } },
+                    y: { ticks: { color:'#94a3b8', font: tickFont }, grid: { color: gridColor } }
+                }
+            }
+        });
+
+               const revenueLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(revenue?.Select(r => r.Month) ?? new List<string>()));
+        const revenueCounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(revenue?.Select(r => r.Revenue) ?? new List<decimal>()));
+
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'bar',
+            data: {
+                labels: revenueLabels,
+                datasets: [{
+                    label: 'Gelir (₺)',
+                    data: revenueCounts,
+                    backgroundColor: 'rgba(16,185,129,0.7)',
+                    borderRadius: 4, borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false }, tooltip },
+                scales: {
+                    x: { ticks: { color:'#94a3b8', font: tickFont }, grid: { color: gridColor } },
+                    y: { ticks: { color:'#94a3b8', font: tickFont }, grid: { color: gridColor } }
+                }
+            }
+        });
+
+        // ── Line Chart (Tamamlanma Oranı)
+              const completionLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(completion?.Select(c => c.Month) ?? new List<string>()));
+        const completionRates  = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(completion?.Select(c => c.Rate) ?? new List<decimal>()));
+
+        new Chart(document.getElementById('completionChart'), {
+            type: 'line',
+            data: {
+                labels: completionLabels,
+                datasets: [
+                    {
+                        label: 'Tamamlanma %',
+                        data: completionRates,
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139,92,246,0.1)',
+                        tension: 0.4, fill: true,
+                        pointBackgroundColor: '#8b5cf6',
+                        pointRadius: 3, borderWidth: 2
+                    },
+                    {
+                        label: 'Hedef %',
+                        data: Array(completionLabels.length).fill(80),
+                        borderColor: '#374151',
+                        borderDash: [4,4],
+                        tension: 0, fill: false,
+                        pointRadius: 0, borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position:'bottom', labels: { color:'#94a3b8', font: tickFont, boxWidth:10, padding:8 } },
+                    tooltip
+                },
+                scales: {
+                    x: { ticks: { color:'#94a3b8', font: tickFont }, grid: { color: gridColor } },
+                    y: { ticks: { color:'#94a3b8', font: tickFont, callback: v => v+'%' }, grid: { color: gridColor } }
+                }
+            }
+        });
+    </script>
+}
+
+
