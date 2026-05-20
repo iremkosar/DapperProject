@@ -10,11 +10,17 @@ Projede büyük ölçekli veri setleri üzerinde filtreleme, sayfalama, dashboar
 🚀 Kullanılan Teknolojiler
 
 ASP.NET Core (.NET 6)
+
 Dapper
+
 Microsoft SQL Server
+
 Chart.js
+
 Bootstrap 5
+
 Bootstrap Icons
+
 ClosedXML
 
 🏗️ Proje Mimarisi
